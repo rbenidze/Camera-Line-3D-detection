@@ -1,0 +1,15 @@
+# Normalise line endings for text, and keep git's hands off binaries.
+# core.autocrlf is true on this machine, which without these rules would let
+# git apply CRLF conversion to anything it guesses is text.
+* text=auto
+
+*.ipynb binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.pth   binary
+*.mp4   binary
+*.ply   binary
+*.npy   binary
+*.mcap  binary
+*.zip   binary

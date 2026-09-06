@@ -1,0 +1,62 @@
+diff --git a/core/stereo_datasets.py b/core/stereo_datasets.py
+index 8266ea4..2d33e9b 100644
+--- a/core/stereo_datasets.py
++++ b/core/stereo_datasets.py
+@@ -256,6 +256,36 @@ class KITTI(StereoDataset):
+             self.image_list += [ [img1, img2] ]
+             self.disparity_list += [ disp ]
+ 
++class DrivingStereo(StereoDataset):
++    def __init__(self, aug_params=None, root='datasets/DrivingStereo'):
++        super(DrivingStereo, self).__init__(aug_params, sparse=True, reader=frame_utils.readDispKITTI)
++        assert os.path.exists(root), f"DrivingStereo root not found: {root}"
++
++        sequences = sorted([d for d in os.listdir(os.path.join(root, 'left')) 
++                            if os.path.isdir(os.path.join(root, 'left', d))])
++        
++        for seq in sequences:
++            left_dir = os.path.join(root, 'left', seq)
++            right_dir = os.path.join(root, 'right', seq)
++            disp_dir = os.path.join(root, 'disparity', seq)
++            
++            if not (os.path.exists(right_dir) and os.path.exists(disp_dir)):
++                logging.warning(f"Skipping {seq}: missing right or disparity folder")
++                continue
++            
++            left_images = sorted(glob(os.path.join(left_dir, '*.jpg')))
++            
++            for left_img in left_images:
++                fname = os.path.basename(left_img).replace('.jpg', '.png')
++                right_img = os.path.join(right_dir, os.path.basename(left_img))
++                disp_img = os.path.join(disp_dir, fname)
++                
++                if os.path.exists(right_img) and os.path.exists(disp_img):
++                    self.image_list += [[left_img, right_img]]
++                    self.disparity_list += [disp_img]
++        
++        logging.info(f"DrivingStereo: loaded {len(self.image_list)} stereo pairs")           
++
+ 
+ class Middlebury(StereoDataset):
+     def __init__(self, aug_params=None, root='datasets/Middlebury', split='F'):
+@@ -301,8 +331,11 @@ def fetch_dataloader(args):
+             new_dataset = (clean_dataset*4) + (final_dataset*4)
+             logging.info(f"Adding {len(new_dataset)} samples from SceneFlow")
+         elif 'kitti' in dataset_name:
+-            new_dataset = KITTI(aug_params, split=dataset_name)
++            new_dataset = KITTI(aug_params)
+             logging.info(f"Adding {len(new_dataset)} samples from KITTI")
++        elif dataset_name == 'drivingstereo':
++            new_dataset = DrivingStereo(aug_params)
++            logging.info(f"Adding {len(new_dataset)} samples from DrivingStereo")
+         elif dataset_name == 'sintel_stereo':
+             new_dataset = SintelStereo(aug_params)*140
+             logging.info(f"Adding {len(new_dataset)} samples from Sintel Stereo")
+@@ -314,6 +347,7 @@ def fetch_dataloader(args):
+             logging.info(f"Adding {len(new_dataset)} samples from Tartain Air")
+         train_dataset = new_dataset if train_dataset is None else train_dataset + new_dataset
+ 
++
+     train_loader = data.DataLoader(train_dataset, batch_size=args.batch_size, 
+         pin_memory=True, shuffle=True, num_workers=int(os.environ.get('SLURM_CPUS_PER_TASK', 6))-2, drop_last=True)
+ 

@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# Large data and media. The working tree is ~24 GB; almost none of it belongs
+# in git. Three of the videos exceed GitHub's 100 MB hard limit on their own.
+# These rules must exist BEFORE the fresh `git init` and re-push.
+# ---------------------------------------------------------------------------
+
+# Extracted frames and LiDAR sweeps (~25,600 files)
+camera_frames/
+camera_frames_fr/
+lidar_front/
+frames_to_label/
+frames_to_label_from_3200_every30/
+selected_frames/
+
+# Point clouds and raw arrays
+*.ply
+*.npy
+
+# Result and debug images. Everything stays on disk; only the handful used by
+# the README ships.
+*.png
+*.jpg
+!docs/images/*.png
+
+# Video (host as GitHub Release assets, not in the tree)
+*.mp4
+
+# Recordings and archives
+*.mcap
+*.zip
+
+# Preserved originals: the pre-restructure tree and the superseded scripts.
+# Kept on disk as evidence, deliberately not shipped.
+_archive/
+
+# Model weights and checkpoints
+*.pth
+checkpoints/
+models/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Never commit credentials
+.env
