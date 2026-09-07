@@ -88,6 +88,15 @@ and not hyperparameters: sparse LiDAR returns land overwhelmingly on large
 planar surfaces, so a network trained against them is never penalised for
 smoothing away a thin structure that has no ground truth point on it.
 
+![Disparity from the pretrained baseline against the fine-tuned checkpoint](docs/images/disparity-comparison.png)
+
+*A DrivingStereo holdout frame. Left: input image. Centre: pretrained Scene Flow
+baseline, **which is the deployed model**. Right: the fine-tuned step-2000
+checkpoint, which scores the better aggregate EPE of the two, 0.515 against
+0.859, and is nonetheless not deployed because it is worse on the thin
+structures this pipeline depends on. The centre and right panels are the same
+disagreement the table above measures.*
+
 ### 3D reconstruction accuracy
 
 | Quantity | Value |
