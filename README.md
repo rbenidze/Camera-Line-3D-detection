@@ -47,11 +47,6 @@ reality. Detection and disparity are sound there; the geometry is not. This is a
 data availability problem, not a pipeline correctness problem. Full detail, with
 the evidence, in [docs/calibration-limitation.md](docs/calibration-limitation.md).
 
-| | |
-|---|---|
-| ![Detection on DrivingStereo](docs/images/detection-drivingstereo.png) | ![Track borders on Yas Marina](docs/images/borders-yas.png) |
-| Detection on DrivingStereo, the branch that produces every metric number | Boundary extraction on Yas Marina, which does not reach metric scale |
-
 ## Findings
 
 The most useful result here is a negative one, and it is documented in full in
